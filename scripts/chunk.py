@@ -63,6 +63,9 @@ def normalized_page_type(page_type: str, heading: str) -> str:
     normalized = PAGE_TYPE_MAP.get(page_type, page_type)
     heading_lower = clean_text(heading).lower()
 
+    if "double major" in heading_lower or "double degree" in heading_lower:
+        return "double_major_policy"
+
     if "courses required for admission" in heading_lower:
         return "major_admissions"
 

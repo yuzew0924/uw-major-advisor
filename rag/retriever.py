@@ -37,7 +37,7 @@ INTENT_TO_PAGE_TYPES = {
     "degree_requirements": {"degree_requirements"},
 }
 MAJOR_BONUS = 0.08
-PER_MAJOR_K = 4
+PER_MAJOR_K = 5
 
 
 class RetrievalError(RuntimeError):
@@ -361,6 +361,16 @@ class Retriever:
             return self.format_results(results)
 
         target_majors = infer_query_majors(query)
+        if intent == "double_major_policy":
+            results = self.search_candidates(
+                query=query,
+                query_vector=query_vector,
+                top_k=top_k,
+                target_majors=target_majors,
+                page_types=page_types,
+            )
+            return self.format_results(results)
+
         if len(target_majors) > 1:
             per_major_k = max(PER_MAJOR_K, top_k // len(target_majors))
             results = self.retrieve_for_majors(

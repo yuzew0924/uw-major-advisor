@@ -1066,7 +1066,7 @@
       "major": "CSE",
       "url": "https://www.cs.washington.edu/academics/undergraduate/degree-requirements/",
       "title": "Undergraduate Education",
-      "page_type": "degree_requirements",
+      "page_type": "double_major_policy",
       "heading": "Double Majors",
       "source_type": "official"
     },
@@ -1936,7 +1936,7 @@
       "major": "ACMS",
       "url": "https://acms.washington.edu/admissions",
       "title": "Admissions",
-      "page_type": "major_admissions",
+      "page_type": "double_major_policy",
       "heading": "Double Major / Double Degree",
       "source_type": "official"
     },
