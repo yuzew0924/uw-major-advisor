@@ -44,14 +44,39 @@ PAGES: tuple[PageSpec, ...] = (
         "https://ischool.uw.edu/programs/informatics/curriculum",
     ),
     PageSpec(
+        "INFO",
+        "admissions_prerequisites",
+        "https://ischool.uw.edu/programs/informatics/admissions/prerequisites",
+    ),
+    PageSpec(
+        "INFO",
+        "transfer_course_policy",
+        "https://ischool.uw.edu/programs/informatics/admissions/informatics-transfer-course-policy",
+    ),
+    PageSpec(
         "CSE",
         "admissions",
         "https://www.cs.washington.edu/academics/undergraduate/admissions/",
     ),
     PageSpec(
         "CSE",
+        "current_uw_admissions",
+        "https://www.cs.washington.edu/academics/undergraduate/admissions/current-uw/",
+    ),
+    PageSpec(
+        "CSE",
+        "transfer_admissions",
+        "https://www.cs.washington.edu/academics/undergraduate/admissions/transfers/",
+    ),
+    PageSpec(
+        "CSE",
         "requirements",
         "https://www.cs.washington.edu/academics/undergraduate/degree-requirements/",
+    ),
+    PageSpec(
+        "CSE",
+        "non_major_options",
+        "https://www.cs.washington.edu/academics/undergraduate/non-major-options/",
     ),
     PageSpec("ACMS", "admissions", "https://acms.washington.edu/admissions"),
     PageSpec(
@@ -98,6 +123,16 @@ PAGES: tuple[PageSpec, ...] = (
         "MATH",
         "requirements",
         "https://math.washington.edu/bs-mathematics-major-requirements-0",
+    ),
+    PageSpec(
+        "UW",
+        "double_major_policy",
+        "https://artsci.washington.edu/academics/declaring-a-major",
+    ),
+    PageSpec(
+        "UW",
+        "double_degree_policy",
+        "https://registrar.washington.edu/staff-faculty/dars-advisers/exc-double-triple-degree/",
     ),
 )
 

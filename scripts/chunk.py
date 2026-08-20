@@ -20,6 +20,17 @@ IGNORED_SECTION_HEADINGS = {
     "resources",
     "resources:",
 }
+PAGE_TYPE_MAP = {
+    "admissions": "major_admissions",
+    "admissions_prerequisites": "major_admissions",
+    "current_uw_admissions": "major_admissions",
+    "transfer_admissions": "major_admissions",
+    "transfer_course_policy": "major_admissions",
+    "requirements": "degree_requirements",
+    "non_major_options": "course_registration",
+    "double_major_policy": "double_major_policy",
+    "double_degree_policy": "general_policy",
+}
 
 
 def encoding_for_model(model: str = EMBEDDING_MODEL) -> tiktoken.Encoding:
@@ -46,6 +57,28 @@ def should_skip_section(heading: str, text: str) -> bool:
         return True
 
     return False
+
+
+def normalized_page_type(page_type: str, heading: str) -> str:
+    normalized = PAGE_TYPE_MAP.get(page_type, page_type)
+    heading_lower = clean_text(heading).lower()
+
+    if "courses required for admission" in heading_lower:
+        return "major_admissions"
+
+    if normalized == "major_admissions":
+        return normalized
+
+    if "prerequisite" in heading_lower and "admission" not in heading_lower:
+        return "course_prerequisites"
+
+    if re.search(r"\b(cse \d{3}|info \d{3}|stat \d{3}|math \d{3})\b", heading_lower):
+        return "course_prerequisites"
+
+    if re.search(r"\b(register|registration|enroll|non-major)\b", heading_lower):
+        return "course_registration"
+
+    return normalized
 
 
 def split_tokens(
@@ -113,6 +146,7 @@ def build_chunks(
 
             for chunk_index, (chunk_text, token_start, token_end) in enumerate(section_chunks):
                 token_count = token_end - token_start
+                page_type = normalized_page_type(page.get("page_type", ""), heading)
                 chunk = {
                     "id": build_chunk_id(
                         page["major"],
@@ -130,7 +164,7 @@ def build_chunks(
                         "major": page["major"],
                         "url": page["url"],
                         "title": page.get("title", ""),
-                        "page_type": page.get("page_type", ""),
+                        "page_type": page_type,
                         "heading": heading,
                         "source_type": page.get("source_type", "official"),
                     },

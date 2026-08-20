@@ -11,7 +11,13 @@ venv/
 .env
 
 # Generated/local data
-data/
+data/*
+!data/source_registry.json
+!data/coverage_report.json
+!data/chunks/
+data/chunks/*
+!data/chunks/index.faiss
+!data/chunks/metadata.json
 
 # Local portfolio captures
 portfolio/

@@ -14,7 +14,13 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from rag.retriever import KNOWN_MAJORS, Retriever
+from rag.retriever import (
+    KNOWN_MAJORS,
+    Retriever,
+    check_topic_coverage,
+    infer_query_intent,
+    infer_query_majors,
+)
 
 
 DEFAULT_MODEL = "gpt-4o-mini"
@@ -99,6 +105,24 @@ def generate_answer(
     return content.strip() if content else ""
 
 
+def retrieval_coverage_error(question: str, chunks: list[dict[str, Any]]) -> str | None:
+    majors = infer_query_majors(question)
+    intent = infer_query_intent(question)
+
+    if intent != "major_admissions" or len(majors) < 2:
+        return None
+
+    missing = check_topic_coverage(chunks, majors, "major_admissions")
+    if not missing:
+        return None
+
+    missing_list = ", ".join(missing)
+    return (
+        "I could not find complete admissions-prerequisite context for all requested majors. "
+        f"Missing major_admissions context for: {missing_list}."
+    )
+
+
 def print_sources(chunks: list[dict[str, Any]]) -> None:
     print("\nSources:")
     seen = set()
@@ -122,11 +146,14 @@ def answer_question(
     load_dotenv(PROJECT_ROOT / ".env")
     require_api_key()
 
-    client = OpenAI()
+    client = OpenAI(default_headers={"Accept-Encoding": "identity"})
     retriever = Retriever(client=client)
     chunks = retriever.retrieve(question, top_k=top_k, major=major)
     if not chunks:
         return "I could not find relevant retrieved context for this question.", []
+    coverage_error = retrieval_coverage_error(question, chunks)
+    if coverage_error:
+        return coverage_error, chunks
 
     answer = generate_answer(client, question, chunks, model=model)
     return answer, chunks

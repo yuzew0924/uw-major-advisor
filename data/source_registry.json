@@ -1,0 +1,200 @@
+[
+  {
+    "source_id": "info_admissions_current_students",
+    "major": "informatics",
+    "page_type": "admissions",
+    "topic": "admission_requirements",
+    "authority": 1.0,
+    "url": "https://ischool.uw.edu/programs/informatics/admissions/current-students",
+    "current_scrape_status": "present"
+  },
+  {
+    "source_id": "info_admissions_prerequisites",
+    "major": "informatics",
+    "page_type": "admissions",
+    "topic": "prerequisites",
+    "authority": 1.0,
+    "url": "https://ischool.uw.edu/programs/informatics/admissions/prerequisites",
+    "current_scrape_status": "present"
+  },
+  {
+    "source_id": "info_transfer_course_policy",
+    "major": "informatics",
+    "page_type": "admissions",
+    "topic": "transfer_prerequisite_equivalencies",
+    "authority": 0.9,
+    "url": "https://ischool.uw.edu/programs/informatics/admissions/informatics-transfer-course-policy",
+    "current_scrape_status": "present"
+  },
+  {
+    "source_id": "info_degree_requirements",
+    "major": "informatics",
+    "page_type": "degree_requirements",
+    "topic": "degree_requirements",
+    "authority": 1.0,
+    "url": "https://ischool.uw.edu/programs/informatics/curriculum",
+    "current_scrape_status": "present"
+  },
+  {
+    "source_id": "cse_admissions_overview",
+    "major": "computer_science",
+    "page_type": "admissions",
+    "topic": "admission_pathways",
+    "authority": 1.0,
+    "url": "https://www.cs.washington.edu/academics/undergraduate/admissions/",
+    "current_scrape_status": "present"
+  },
+  {
+    "source_id": "cse_current_uw_admissions",
+    "major": "computer_science",
+    "page_type": "admissions",
+    "topic": "current_uw_prerequisites",
+    "authority": 1.0,
+    "url": "https://www.cs.washington.edu/academics/undergraduate/admissions/current-uw/",
+    "current_scrape_status": "present"
+  },
+  {
+    "source_id": "cse_transfer_admissions",
+    "major": "computer_science",
+    "page_type": "admissions",
+    "topic": "transfer_prerequisites",
+    "authority": 1.0,
+    "url": "https://www.cs.washington.edu/academics/undergraduate/admissions/transfers/",
+    "current_scrape_status": "present"
+  },
+  {
+    "source_id": "cse_degree_requirements",
+    "major": "computer_science",
+    "page_type": "degree_requirements",
+    "topic": "degree_requirements",
+    "authority": 1.0,
+    "url": "https://www.cs.washington.edu/academics/undergraduate/degree-requirements/",
+    "current_scrape_status": "present"
+  },
+  {
+    "source_id": "cse_non_major_options",
+    "major": "computer_science",
+    "page_type": "course_policy",
+    "topic": "non_major_cse_courses",
+    "authority": 1.0,
+    "url": "https://www.cs.washington.edu/academics/undergraduate/non-major-options/",
+    "current_scrape_status": "present"
+  },
+  {
+    "source_id": "cse_course_registration_policy",
+    "major": "computer_science",
+    "page_type": "course_policy",
+    "topic": "course_registration_policy",
+    "authority": 1.0,
+    "url": "https://www.cs.washington.edu/academics/undergraduate/degree-requirements/",
+    "current_scrape_status": "present"
+  },
+  {
+    "source_id": "uw_double_major_policy",
+    "major": "uw_general",
+    "page_type": "policy",
+    "topic": "double_major_policy",
+    "authority": 0.9,
+    "url": "https://artsci.washington.edu/academics/declaring-a-major",
+    "current_scrape_status": "present"
+  },
+  {
+    "source_id": "uw_double_degree_policy",
+    "major": "uw_general",
+    "page_type": "policy",
+    "topic": "double_degree_policy",
+    "authority": 0.9,
+    "url": "https://registrar.washington.edu/staff-faculty/dars-advisers/exc-double-triple-degree/",
+    "current_scrape_status": "present"
+  },
+  {
+    "source_id": "acms_admissions",
+    "major": "acms",
+    "page_type": "admissions",
+    "topic": "admission_requirements",
+    "authority": 1.0,
+    "url": "https://acms.washington.edu/admissions",
+    "current_scrape_status": "present"
+  },
+  {
+    "source_id": "acms_degree_requirements",
+    "major": "acms",
+    "page_type": "degree_requirements",
+    "topic": "degree_requirements",
+    "authority": 1.0,
+    "url": "https://acms.washington.edu/program-requirements-and-information",
+    "current_scrape_status": "present"
+  },
+  {
+    "source_id": "hcde_admissions",
+    "major": "hcde",
+    "page_type": "admissions",
+    "topic": "admission_requirements",
+    "authority": 1.0,
+    "url": "https://www.hcde.washington.edu/bs/admissions/",
+    "current_scrape_status": "present"
+  },
+  {
+    "source_id": "hcde_degree_requirements",
+    "major": "hcde",
+    "page_type": "degree_requirements",
+    "topic": "degree_requirements",
+    "authority": 1.0,
+    "url": "https://www.hcde.washington.edu/bs/requirements/2024",
+    "current_scrape_status": "present"
+  },
+  {
+    "source_id": "stats_admissions",
+    "major": "statistics",
+    "page_type": "admissions",
+    "topic": "admission_requirements",
+    "authority": 1.0,
+    "url": "https://stat.uw.edu/academics/undergraduate/statistics-bs/application",
+    "current_scrape_status": "present"
+  },
+  {
+    "source_id": "stats_degree_requirements",
+    "major": "statistics",
+    "page_type": "degree_requirements",
+    "topic": "degree_requirements",
+    "authority": 1.0,
+    "url": "https://stat.uw.edu/academics/undergraduate/statistics-bs/major",
+    "current_scrape_status": "present"
+  },
+  {
+    "source_id": "amath_admissions",
+    "major": "applied_mathematics",
+    "page_type": "admissions",
+    "topic": "admission_requirements",
+    "authority": 1.0,
+    "url": "https://amath.washington.edu/undergraduate-admissions",
+    "current_scrape_status": "present"
+  },
+  {
+    "source_id": "amath_degree_requirements",
+    "major": "applied_mathematics",
+    "page_type": "degree_requirements",
+    "topic": "degree_requirements",
+    "authority": 1.0,
+    "url": "https://amath.washington.edu/undergraduate-major-applied-mathematics",
+    "current_scrape_status": "present"
+  },
+  {
+    "source_id": "math_admissions",
+    "major": "mathematics",
+    "page_type": "admissions",
+    "topic": "admission_requirements",
+    "authority": 1.0,
+    "url": "https://math.washington.edu/math-major-declaration",
+    "current_scrape_status": "present"
+  },
+  {
+    "source_id": "math_degree_requirements",
+    "major": "mathematics",
+    "page_type": "degree_requirements",
+    "topic": "degree_requirements",
+    "authority": 1.0,
+    "url": "https://math.washington.edu/bs-mathematics-major-requirements-0",
+    "current_scrape_status": "present"
+  }
+]

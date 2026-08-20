@@ -9,7 +9,7 @@ import streamlit as st
 from dotenv import load_dotenv
 from openai import OpenAI
 
-from rag.chain import DEFAULT_MODEL, DEFAULT_TOP_K, generate_answer
+from rag.chain import DEFAULT_MODEL, DEFAULT_TOP_K, generate_answer, retrieval_coverage_error
 from rag.retriever import KNOWN_MAJORS, Retriever, RetrievalError
 
 
@@ -22,7 +22,7 @@ def init_environment() -> None:
 
 @st.cache_resource(show_spinner=False)
 def get_openai_client() -> OpenAI:
-    return OpenAI()
+    return OpenAI(default_headers={"Accept-Encoding": "identity"})
 
 
 @st.cache_resource(show_spinner=False)
@@ -83,6 +83,9 @@ def answer_user_message(prompt: str) -> tuple[str, list[dict[str, Any]]]:
     )
     if not chunks:
         return "I could not find relevant retrieved context for this question.", []
+    coverage_error = retrieval_coverage_error(prompt, chunks)
+    if coverage_error:
+        return coverage_error, chunks
 
     answer = generate_answer(
         client=client,

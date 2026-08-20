@@ -1,0 +1,42 @@
+[
+  {
+    "question_type": "double_major_policy",
+    "major": "CSE+INFO",
+    "answer_available": false,
+    "source_url": null,
+    "status": "missing_specific_policy",
+    "notes": "General UW double-major policy and CSE double-major exceptions are present, but no source explicitly confirms the CS + Informatics combination."
+  },
+  {
+    "question_type": "programming_prerequisite",
+    "major": "INFO",
+    "answer_available": true,
+    "source_url": "https://ischool.uw.edu/programs/informatics/admissions/prerequisites",
+    "status": "covered",
+    "notes": "The Informatics prerequisites table includes CSE 122 under UW Seattle programming courses."
+  },
+  {
+    "question_type": "major_admissions",
+    "major": "CSE",
+    "answer_available": true,
+    "source_url": "https://www.cs.washington.edu/academics/undergraduate/admissions/current-uw/",
+    "status": "covered",
+    "notes": "Current UW admissions minimum academic requirements are present after adding the dedicated current-UW admissions page."
+  },
+  {
+    "question_type": "course_registration",
+    "major": "CSE",
+    "answer_available": true,
+    "source_url": "https://www.cs.washington.edu/academics/undergraduate/non-major-options/",
+    "status": "covered",
+    "notes": "Non-major options and registration policy are present. Dedicated per-course prerequisite pages are not yet registered."
+  },
+  {
+    "question_type": "course_prerequisites",
+    "major": "CSE 414",
+    "answer_available": false,
+    "source_url": null,
+    "status": "incomplete",
+    "notes": "The non-major options page references CSE 414 and its degree equivalency, but the database does not contain a dedicated CSE 414 prerequisite/course catalog source."
+  }
+]

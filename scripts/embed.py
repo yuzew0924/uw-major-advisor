@@ -14,6 +14,11 @@ from openai import APIConnectionError, OpenAI, OpenAIError, RateLimitError
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+from rag.retriever import Retriever
+
 DEFAULT_CHUNKS_PATH = PROJECT_ROOT / "data" / "chunks" / "chunks.json"
 DEFAULT_INDEX_PATH = PROJECT_ROOT / "data" / "chunks" / "index.faiss"
 DEFAULT_METADATA_PATH = PROJECT_ROOT / "data" / "chunks" / "metadata.json"
@@ -133,12 +138,6 @@ def load_index_and_metadata(
     index = faiss.read_index(str(index_path))
     metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
     return index, metadata
-
-
-def infer_query_major(query: str) -> str | None:
-    query_terms = {term.strip(",:;()[]{}").upper() for term in query.split()}
-    matches = sorted(KNOWN_MAJORS & query_terms)
-    return matches[0] if len(matches) == 1 else None
 
 
 def query_terms(query: str) -> list[str]:
@@ -273,7 +272,7 @@ def main() -> None:
     require_api_key()
 
     args = parse_args()
-    client = OpenAI()
+    client = OpenAI(default_headers={"Accept-Encoding": "identity"})
 
     if args.search_only:
         index, metadata = load_index_and_metadata(args.index_path, args.metadata_path)
@@ -289,20 +288,14 @@ def main() -> None:
         print(f"Wrote vectors to {args.embeddings_path}")
 
     if args.query:
-        major_filter = args.major
-        if not major_filter and not args.no_auto_major_filter:
-            major_filter = infer_query_major(args.query)
-        if major_filter:
-            print(f"Filtering search results to major={major_filter}")
-        results = search(
-            client,
-            args.query,
-            index,
-            metadata,
-            args.model,
-            args.top_k,
-            major_filter,
+        retriever = Retriever(
+            client=client,
+            index_path=args.index_path,
+            metadata_path=args.metadata_path,
+            embedding_model=args.model,
+            auto_major_filter=not args.no_auto_major_filter,
         )
+        results = retriever.retrieve(args.query, top_k=args.top_k, major=args.major)
         print_results(results)
 
 
