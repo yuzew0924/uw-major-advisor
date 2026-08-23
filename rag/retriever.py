@@ -20,6 +20,11 @@ COURSE_CODE_PATTERN = re.compile(
     r"\b(?:CSE|INFO|MATH|STAT|AMATH|HCDE|ACMS)\s*\d{3}\b",
     re.IGNORECASE,
 )
+SUBJECT_COURSE_PHRASE_PATTERN = re.compile(
+    r"\b(?:computer science|informatics|statistics|stat|math|mathematics|info|cse)\s+"
+    r"(?:course|courses|class|classes)\b",
+    re.IGNORECASE,
+)
 MAJOR_PATTERNS = (
     ("CSE", r"\b(computer science|cs major|cse major)\b"),
     ("INFO", r"\b(informatics|info major)\b"),
@@ -30,6 +35,7 @@ MAJOR_PATTERNS = (
     ("MATH", r"\b(mathematics|math major)\b"),
 )
 INTENT_TO_PAGE_TYPES = {
+    "course_eligibility": {"major_admissions", "course_prerequisites"},
     "major_admissions": {"major_admissions"},
     "course_prerequisites": {"course_prerequisites"},
     "course_registration": {"course_registration", "course_prerequisites"},
@@ -48,13 +54,21 @@ def remove_course_codes(query: str) -> str:
     return COURSE_CODE_PATTERN.sub(" ", query)
 
 
+def remove_subject_course_phrases(query: str) -> str:
+    return SUBJECT_COURSE_PHRASE_PATTERN.sub(" ", query)
+
+
+def extract_course_codes(query: str) -> list[str]:
+    return [match.group(0).upper().replace(" ", "") for match in COURSE_CODE_PATTERN.finditer(query)]
+
+
 def append_unique(items: list[str], item: str) -> None:
     if item not in items:
         items.append(item)
 
 
 def infer_query_majors(query: str) -> list[str]:
-    query_without_courses = remove_course_codes(query).lower()
+    query_without_courses = remove_subject_course_phrases(remove_course_codes(query)).lower()
     majors: list[str] = []
 
     for major, pattern in MAJOR_PATTERNS:
@@ -74,12 +88,25 @@ def infer_query_major(query: str) -> str | None:
 
 def infer_query_intent(query: str) -> str:
     q = query.lower()
+    course_codes = extract_course_codes(query)
     majors = infer_query_majors(query)
 
     if re.search(r"\b(double major|double degree)\b", q):
         return "double_major_policy"
 
+    is_course_eligibility_language = bool(
+        re.search(
+            r"\b(satisfy|satisfies|count|counts|accepted|eligible|fulfill|fulfills|completed|missing)\b",
+            q,
+        )
+    )
+    if course_codes and is_course_eligibility_language:
+        return "course_eligibility"
+
     is_admissions_language = bool(re.search(r"\b(apply|admission|admitted|application)\b", q))
+    if course_codes and is_admissions_language and majors:
+        return "major_admissions"
+
     is_major_requirement_question = bool(
         re.search(r"\b(satisfy|satisfies|count|counts|use)\b", q)
         and majors
@@ -151,6 +178,21 @@ def check_topic_coverage(
             missing.append(major)
 
     return missing
+
+
+def filter_target_majors(
+    results: list[dict[str, Any]],
+    inferred_majors: list[str],
+) -> list[dict[str, Any]]:
+    if not inferred_majors:
+        return results
+
+    allowed_majors = set(inferred_majors) | {"UW"}
+    return [
+        result
+        for result in results
+        if result.get("metadata", result).get("major") in allowed_majors
+    ]
 
 
 def query_terms(query: str) -> list[str]:
@@ -351,6 +393,7 @@ class Retriever:
             )
             return self.format_results(results)
 
+        target_majors = infer_query_majors(query)
         if not self.auto_major_filter:
             results = self.search_candidates(
                 query=query,
@@ -358,9 +401,9 @@ class Retriever:
                 top_k=top_k,
                 page_types=page_types,
             )
+            results = filter_target_majors(results, target_majors)
             return self.format_results(results)
 
-        target_majors = infer_query_majors(query)
         if intent == "double_major_policy":
             results = self.search_candidates(
                 query=query,
@@ -369,6 +412,7 @@ class Retriever:
                 target_majors=target_majors,
                 page_types=page_types,
             )
+            results = filter_target_majors(results, target_majors)
             return self.format_results(results)
 
         if len(target_majors) > 1:
@@ -380,6 +424,7 @@ class Retriever:
                 per_major_k=per_major_k,
                 page_types=page_types,
             )
+            results = filter_target_majors(results, target_majors)
             return self.format_results(results)
 
         results = self.search_candidates(
@@ -389,4 +434,5 @@ class Retriever:
             target_majors=target_majors,
             page_types=page_types,
         )
+        results = filter_target_majors(results, target_majors)
         return self.format_results(results)

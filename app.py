@@ -9,7 +9,13 @@ import streamlit as st
 from dotenv import load_dotenv
 from openai import OpenAI
 
-from rag.chain import DEFAULT_MODEL, DEFAULT_TOP_K, generate_answer, retrieval_coverage_error
+from rag.chain import (
+    DEFAULT_MODEL,
+    DEFAULT_TOP_K,
+    generate_answer,
+    needs_major_clarification,
+    retrieval_coverage_error,
+)
 from rag.retriever import KNOWN_MAJORS, Retriever, RetrievalError
 
 
@@ -73,6 +79,9 @@ def selected_major() -> str | None:
 def answer_user_message(prompt: str) -> tuple[str, list[dict[str, Any]]]:
     if not os.getenv("OPENAI_API_KEY"):
         return "OPENAI_API_KEY is missing. Add it to `.env` before asking questions.", []
+
+    if not selected_major() and needs_major_clarification(prompt):
+        return "Which major are you applying to?", []
 
     client = get_openai_client()
     retriever = get_retriever()

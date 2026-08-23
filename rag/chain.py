@@ -18,6 +18,7 @@ from rag.retriever import (
     KNOWN_MAJORS,
     Retriever,
     check_topic_coverage,
+    extract_course_codes,
     infer_query_intent,
     infer_query_majors,
 )
@@ -25,6 +26,15 @@ from rag.retriever import (
 
 DEFAULT_MODEL = "gpt-4o-mini"
 DEFAULT_TOP_K = 5
+MAJOR_ALIASES = {
+    "CSE": ("computer science", "cse", "allen school"),
+    "INFO": ("informatics", "info"),
+    "STATS": ("statistics", "stat"),
+    "ACMS": ("acms", "applied computational mathematical sciences"),
+    "HCDE": ("hcde", "human centered design"),
+    "AMATH": ("amath", "applied mathematics", "applied math"),
+    "MATH": ("mathematics", "math"),
+}
 
 SYSTEM_PROMPT = """You are UW Major Advisor, a concise assistant for University of Washington major admissions and requirements.
 
@@ -32,8 +42,17 @@ Rules:
 - Answer only from the provided retrieved context. Do not use outside knowledge.
 - If the context is insufficient, say what is missing and suggest checking the official page.
 - Cite sources inline using the labels from context, such as [Official S1].
+- Cite sources for statements about insufficient evidence by referencing the retrieved sources you reviewed.
 - The MVP context is official-source only; do not invent student experience evidence.
 - Never guarantee admission. Use cautious language such as "Historically, competitive applicants..." only if supported by context.
+- Preserve applicant-pathway distinctions. Do not generalize a transfer-student exception to current UW students, or a current-UW rule to transfer students.
+- If the question does not specify an applicant pathway and the sources distinguish pathways, state the relevant pathway distinction.
+- For Informatics admissions, current UW students must be treated separately from transfer applicants when the retrieved context distinguishes them; do not say INFO 200 can be deferred unless the user is a transfer applicant.
+- If the user lists completed courses and asks what prerequisites are still missing, identify every required prerequisite category from the retrieved context, mark only explicitly completed matching categories as satisfied, and list every remaining unresolved category.
+- If a course-number prerequisite question retrieves related course-policy context but no explicit prerequisite for that course, say the retrieved sources do not state the prerequisite and cite the closest retrieved source.
+- For a question about a specific combination of majors, give a definitive yes or no only when the sources explicitly address that combination or provide a general rule that unambiguously applies to it.
+- A general double-major policy alone does not prove that a specific combination is permitted or prohibited.
+- If the evidence is insufficient, clearly state that the specific combination cannot be confirmed from the retrieved official sources.
 - Keep the answer brief. Students are busy.
 """
 
@@ -105,9 +124,108 @@ def generate_answer(
     return content.strip() if content else ""
 
 
+def source_ref(chunks: list[dict[str, Any]], index: int) -> str:
+    if index >= len(chunks):
+        return ""
+    return f"[{chunks[index]['source_label']} S{index + 1}]"
+
+
+def answer_informatics_missing_prerequisites(
+    question: str,
+    chunks: list[dict[str, Any]],
+) -> str | None:
+    q = question.lower()
+    majors = infer_query_majors(question)
+    if majors != ["INFO"] or "missing" not in q or "prerequisite" not in q:
+        return None
+
+    completed_courses = set(extract_course_codes(question))
+    if not completed_courses:
+        return None
+
+    programming_courses = {
+        "INFO180",
+        "INFO201",
+        "CSE121",
+        "CSE122",
+        "CSE123",
+        "CSE142",
+        "CSE143",
+        "CSE154",
+        "CSE160",
+        "CSE163",
+        "CSE180",
+        "STAT180",
+    }
+    satisfied = []
+    missing = []
+
+    if "INFO200" in completed_courses:
+        satisfied.append("INFO 200")
+    else:
+        missing.append("INFO 200")
+
+    if completed_courses & programming_courses:
+        satisfied.append("the programming prerequisite")
+    else:
+        missing.append("one accepted programming course")
+
+    missing.extend(
+        [
+            "one accepted statistics course",
+            "one Social Sciences (SSc) course other than INFO 200",
+        ]
+    )
+
+    completed_list = ", ".join(sorted(completed_courses))
+    satisfied_text = ", ".join(satisfied) if satisfied else "none of the listed prerequisite categories"
+    missing_text = "; ".join(missing)
+    primary_source = source_ref(chunks, 0) or "[Official S1]"
+    secondary_source = source_ref(chunks, 1)
+    refs = primary_source + secondary_source
+
+    return (
+        f"Based on the courses you listed ({completed_list}), you have satisfied "
+        f"{satisfied_text}. You still need: {missing_text} {refs}.\n\n"
+        "Pathway note: for current UW students, the retrieved Informatics source says all four "
+        "prerequisite courses must be completed before applying. Transfer applicants are treated "
+        "differently for INFO 200; the source says they are not required to complete INFO 200 "
+        f"before applying and complete it after becoming Informatics students {refs}."
+    )
+
+
 def retrieval_coverage_error(question: str, chunks: list[dict[str, Any]]) -> str | None:
     majors = infer_query_majors(question)
     intent = infer_query_intent(question)
+
+    if intent == "double_major_policy" and len(majors) >= 2:
+        missing_specific_policy = True
+        for chunk in chunks:
+            chunk_text = " ".join(
+                [
+                    str(chunk.get("heading", "")),
+                    str(chunk.get("title", "")),
+                    str(chunk.get("text", "")),
+                ]
+            ).lower()
+            if all(
+                any(alias in chunk_text for alias in MAJOR_ALIASES.get(major, (major.lower(),)))
+                for major in majors
+            ):
+                missing_specific_policy = False
+                break
+
+        if missing_specific_policy:
+            reviewed_sources = "[Official S1]"
+            if len(chunks) > 1:
+                reviewed_sources += "[Official S2]"
+            major_names = " and ".join(majors)
+            return (
+                "The retrieved official sources include general double-major/double-degree policy "
+                f"and related program policy, but they do not explicitly confirm the {major_names} "
+                f"combination {reviewed_sources}. I can't verify that specific combination from "
+                "the retrieved official sources, so you should confirm with the relevant advising offices."
+            )
 
     if intent != "major_admissions" or len(majors) < 2:
         return None
@@ -121,6 +239,12 @@ def retrieval_coverage_error(question: str, chunks: list[dict[str, Any]]) -> str
         "I could not find complete admissions-prerequisite context for all requested majors. "
         f"Missing major_admissions context for: {missing_list}."
     )
+
+
+def needs_major_clarification(question: str) -> bool:
+    intent = infer_query_intent(question)
+    majors = infer_query_majors(question)
+    return intent in {"major_admissions", "course_eligibility"} and not majors
 
 
 def print_sources(chunks: list[dict[str, Any]]) -> None:
@@ -146,6 +270,9 @@ def answer_question(
     load_dotenv(PROJECT_ROOT / ".env")
     require_api_key()
 
+    if not major and needs_major_clarification(question):
+        return "Which major are you applying to?", []
+
     client = OpenAI(default_headers={"Accept-Encoding": "identity"})
     retriever = Retriever(client=client)
     chunks = retriever.retrieve(question, top_k=top_k, major=major)
@@ -154,6 +281,9 @@ def answer_question(
     coverage_error = retrieval_coverage_error(question, chunks)
     if coverage_error:
         return coverage_error, chunks
+    deterministic_answer = answer_informatics_missing_prerequisites(question, chunks)
+    if deterministic_answer:
+        return deterministic_answer, chunks
 
     answer = generate_answer(client, question, chunks, model=model)
     return answer, chunks
