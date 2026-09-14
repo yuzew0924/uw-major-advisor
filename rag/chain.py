@@ -14,6 +14,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
+from rag.prerequisites import check_requirements
 from rag.retriever import (
     KNOWN_MAJORS,
     Retriever,
@@ -143,43 +144,26 @@ def answer_informatics_missing_prerequisites(
     if not completed_courses:
         return None
 
-    programming_courses = {
-        "INFO180",
-        "INFO201",
-        "CSE121",
-        "CSE122",
-        "CSE123",
-        "CSE142",
-        "CSE143",
-        "CSE154",
-        "CSE160",
-        "CSE163",
-        "CSE180",
-        "STAT180",
-    }
-    satisfied = []
-    missing = []
+    requirement_result = check_requirements("INFO", completed_courses)
+    if not requirement_result:
+        return None
 
-    if "INFO200" in completed_courses:
-        satisfied.append("INFO 200")
-    else:
-        missing.append("INFO 200")
+    completed_list = ", ".join(requirement_result["completed"])
+    satisfied_parts = []
+    for requirement, courses in requirement_result["satisfied"].items():
+        if requirement == "programming":
+            satisfied_parts.append(f"the programming prerequisite via {', '.join(courses)}")
+        elif requirement == "statistics":
+            satisfied_parts.append(f"the statistics prerequisite via {', '.join(courses)}")
+        else:
+            satisfied_parts.append(", ".join(courses))
 
-    if completed_courses & programming_courses:
-        satisfied.append("the programming prerequisite")
-    else:
-        missing.append("one accepted programming course")
-
-    missing.extend(
-        [
-            "one accepted statistics course",
-            "one Social Sciences (SSc) course other than INFO 200",
-        ]
+    satisfied_text = (
+        ", ".join(satisfied_parts)
+        if satisfied_parts
+        else "none of the listed prerequisite categories"
     )
-
-    completed_list = ", ".join(sorted(completed_courses))
-    satisfied_text = ", ".join(satisfied) if satisfied else "none of the listed prerequisite categories"
-    missing_text = "; ".join(missing)
+    missing_text = "; ".join(requirement_result["missing"])
     primary_source = source_ref(chunks, 0) or "[Official S1]"
     secondary_source = source_ref(chunks, 1)
     refs = primary_source + secondary_source
@@ -223,7 +207,7 @@ def retrieval_coverage_error(question: str, chunks: list[dict[str, Any]]) -> str
             return (
                 "The retrieved official sources include general double-major/double-degree policy "
                 f"and related program policy, but they do not explicitly confirm the {major_names} "
-                f"combination {reviewed_sources}. I can't verify that specific combination from "
+                f"combination {reviewed_sources}. I cannot confirm that specific combination from "
                 "the retrieved official sources, so you should confirm with the relevant advising offices."
             )
 
@@ -268,10 +252,11 @@ def answer_question(
     major: str | None = None,
 ) -> tuple[str, list[dict[str, Any]]]:
     load_dotenv(PROJECT_ROOT / ".env")
-    require_api_key()
 
     if not major and needs_major_clarification(question):
         return "Which major are you applying to?", []
+
+    require_api_key()
 
     client = OpenAI(default_headers={"Accept-Encoding": "identity"})
     retriever = Retriever(client=client)
