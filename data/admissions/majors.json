@@ -1,0 +1,14 @@
+[
+  {
+    "id": "uw-seattle-informatics",
+    "name": "Informatics",
+    "campus": "Seattle",
+    "aliases": [
+      "info",
+      "informatics",
+      "信息学"
+    ],
+    "status": "verified",
+    "policy_file": "policies/uw-seattle-informatics.json"
+  }
+]

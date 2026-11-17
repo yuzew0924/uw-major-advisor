@@ -9,6 +9,7 @@ import streamlit as st
 from dotenv import load_dotenv
 from openai import OpenAI
 
+from rag.admissions import admissions, fallback_query
 from rag.chain import (
     DEFAULT_MODEL,
     DEFAULT_TOP_K,
@@ -16,7 +17,7 @@ from rag.chain import (
     needs_major_clarification,
     retrieval_coverage_error,
 )
-from rag.retriever import KNOWN_MAJORS, Retriever, RetrievalError
+from rag.retriever import KNOWN_MAJORS, Retriever
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent
@@ -77,16 +78,21 @@ def selected_major() -> str | None:
 
 
 def answer_user_message(prompt: str) -> tuple[str, list[dict[str, Any]]]:
+    structured_answer = admissions().answer(prompt)
+    if structured_answer:
+        return structured_answer, []
+
     if not os.getenv("OPENAI_API_KEY"):
         return "OPENAI_API_KEY is missing. Add it to `.env` before asking questions.", []
 
-    if not selected_major() and needs_major_clarification(prompt):
+    retrieval_query = fallback_query(prompt)
+    if not selected_major() and needs_major_clarification(retrieval_query):
         return "Which major are you applying to?", []
 
     client = get_openai_client()
     retriever = get_retriever()
     chunks = retriever.retrieve(
-        prompt,
+        retrieval_query,
         top_k=st.session_state.top_k,
         major=selected_major(),
     )
@@ -137,12 +143,9 @@ def main() -> None:
         st.session_state.messages = []
 
     try:
-        get_retriever()
-    except RetrievalError as error:
-        st.error(str(error))
-        st.stop()
+        admissions()
     except Exception as error:
-        st.error(f"Could not initialize retriever: {error}")
+        st.error(f"Could not load admissions policies: {error}")
         st.stop()
 
     render_chat_history()

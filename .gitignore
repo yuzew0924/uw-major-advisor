@@ -12,6 +12,7 @@ venv/
 
 # Generated/local data
 data/*
+!data/admissions/
 !data/source_registry.json
 !data/coverage_report.json
 !data/chunks/

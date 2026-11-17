@@ -14,6 +14,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
+from rag.admissions import admissions, fallback_query
 from rag.prerequisites import check_requirements
 from rag.retriever import (
     KNOWN_MAJORS,
@@ -41,6 +42,7 @@ SYSTEM_PROMPT = """You are UW Major Advisor, a concise assistant for University 
 
 Rules:
 - Answer only from the provided retrieved context. Do not use outside knowledge.
+- For course eligibility, distinguish an unlisted course from an explicitly rejected course. If an SSc designation is needed and the course's designation is unavailable, say it needs confirmation. Do not infer individual approval.
 - If the context is insufficient, say what is missing and suggest checking the official page.
 - Cite sources inline using the labels from context, such as [Official S1].
 - Cite sources for statements about insufficient evidence by referencing the retrieved sources you reviewed.
@@ -251,16 +253,21 @@ def answer_question(
     model: str = DEFAULT_MODEL,
     major: str | None = None,
 ) -> tuple[str, list[dict[str, Any]]]:
-    load_dotenv(PROJECT_ROOT / ".env")
+    structured_answer = admissions().answer(question)
+    if structured_answer:
+        return structured_answer, []
 
-    if not major and needs_major_clarification(question):
+    load_dotenv(PROJECT_ROOT / ".env")
+    retrieval_query = fallback_query(question)
+
+    if not major and needs_major_clarification(retrieval_query):
         return "Which major are you applying to?", []
 
     require_api_key()
 
     client = OpenAI(default_headers={"Accept-Encoding": "identity"})
     retriever = Retriever(client=client)
-    chunks = retriever.retrieve(question, top_k=top_k, major=major)
+    chunks = retriever.retrieve(retrieval_query, top_k=top_k, major=major)
     if not chunks:
         return "I could not find relevant retrieved context for this question.", []
     coverage_error = retrieval_coverage_error(question, chunks)

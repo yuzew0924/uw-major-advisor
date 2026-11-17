@@ -1,0 +1,430 @@
+{
+  "major_id": "uw-seattle-informatics",
+  "major_campus": "Seattle",
+  "policies": [
+    {
+      "applicant_types": [
+        "current_uw_student",
+        "transfer_applicant"
+      ],
+      "effective_from": null,
+      "effective_until": null,
+      "source_url": "https://ischool.uw.edu/programs/informatics/admissions/prerequisites",
+      "requirements": [
+        {
+          "id": "info200",
+          "label": "INFO 200",
+          "applicant_types": [
+            "current_uw_student"
+          ],
+          "options": [
+            {
+              "all_of": [
+                {
+                  "course": "INFO 200",
+                  "campus": "Seattle"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "programming",
+          "label": "Computer Programming",
+          "options": [
+            {
+              "all_of": [
+                {
+                  "course": "INFO 180",
+                  "campus": "Seattle"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "INFO 201",
+                  "campus": "Seattle"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "CSE 121",
+                  "campus": "Seattle"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "CSE 122",
+                  "campus": "Seattle"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "CSE 123",
+                  "campus": "Seattle"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "CSE 142",
+                  "campus": "Seattle"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "CSE 143",
+                  "campus": "Seattle"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "CSE 154",
+                  "campus": "Seattle"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "CSE 160",
+                  "campus": "Seattle"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "CSE 163",
+                  "campus": "Seattle"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "CSE 180",
+                  "campus": "Seattle"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "STAT 180",
+                  "campus": "Seattle"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "CSS 142",
+                  "campus": "Bothell"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "CSS 161",
+                  "campus": "Bothell"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "CSS 143",
+                  "campus": "Bothell"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "TCSS 142",
+                  "campus": "Tacoma"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "statistics",
+          "label": "Statistics",
+          "options": [
+            {
+              "all_of": [
+                {
+                  "course": "STAT 220",
+                  "campus": "Seattle"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "BIOSTAT 310",
+                  "campus": "Seattle"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "CSE 312",
+                  "campus": "Seattle"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "EDPSY 490",
+                  "campus": "Seattle"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "IND E 315",
+                  "campus": "Seattle"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "MATH 390",
+                  "campus": "Seattle"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "MATH 394",
+                  "campus": "Seattle"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "STAT 394",
+                  "campus": "Seattle"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "PSYCH 315",
+                  "campus": "Seattle"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "PSYCH 317",
+                  "campus": "Seattle"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "QMETH 201",
+                  "campus": "Seattle"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "Q SCI 381",
+                  "campus": "Seattle"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "STAT 290",
+                  "campus": "Seattle"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "STAT 311",
+                  "campus": "Seattle"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "STAT 390",
+                  "campus": "Seattle"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "STAT 1XX",
+                  "campus": "Seattle"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "BIS 215",
+                  "campus": "Bothell"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "BIS 315",
+                  "campus": "Bothell"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "B MATH 215",
+                  "campus": "Bothell"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "B BUS 215",
+                  "campus": "Bothell"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "STMATH 341",
+                  "campus": "Bothell"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "TMATH 110",
+                  "campus": "Tacoma"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "STAT 221",
+                  "campus": "Seattle"
+                },
+                {
+                  "course": "STAT 321",
+                  "campus": "Seattle"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "STAT 221",
+                  "campus": "Seattle"
+                },
+                {
+                  "course": "CSSS 321",
+                  "campus": "Seattle"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "SOC 221",
+                  "campus": "Seattle"
+                },
+                {
+                  "course": "STAT 321",
+                  "campus": "Seattle"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "SOC 221",
+                  "campus": "Seattle"
+                },
+                {
+                  "course": "CSSS 321",
+                  "campus": "Seattle"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "CSSS 221",
+                  "campus": "Seattle"
+                },
+                {
+                  "course": "STAT 321",
+                  "campus": "Seattle"
+                }
+              ]
+            },
+            {
+              "all_of": [
+                {
+                  "course": "CSSS 221",
+                  "campus": "Seattle"
+                },
+                {
+                  "course": "CSSS 321",
+                  "campus": "Seattle"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ssc",
+          "label": "Social Sciences",
+          "designation": "SSc",
+          "excluded_courses": [
+            "INFO 200"
+          ]
+        }
+      ]
+    }
+  ]
+}
