@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -10,6 +11,8 @@ import tiktoken
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(PROJECT_ROOT))
+from rag.admissions_scope import keep_section
 DEFAULT_INPUT = PROJECT_ROOT / "data" / "raw" / "pages.json"
 DEFAULT_OUTPUT = PROJECT_ROOT / "data" / "chunks" / "chunks.json"
 EMBEDDING_MODEL = "text-embedding-3-small"
@@ -136,6 +139,8 @@ def build_chunks(
     for page in pages:
         for section_index, section in enumerate(page.get("sections", [])):
             heading = section.get("heading", "")
+            if not keep_section(page.get("page_type", ""), heading):
+                continue
             section_text = clean_text(section.get("text", ""))
             if not section_text or should_skip_section(heading, section_text):
                 continue

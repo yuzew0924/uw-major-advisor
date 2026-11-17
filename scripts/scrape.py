@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import re
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
@@ -15,6 +16,8 @@ urllib3.disable_warnings(category=InsecureRequestWarning)
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(PROJECT_ROOT))
+from rag.admissions_scope import keep_section
 OUTPUT_PATH = PROJECT_ROOT / "data" / "raw" / "pages.json"
 
 USER_AGENT = (
@@ -311,7 +314,10 @@ def scrape_page(session: requests.Session, spec: PageSpec) -> dict[str, object]:
 
     title = get_page_title(soup)
     root = content_root(soup)
-    sections = extract_sections(root, title)
+    sections = [
+        section for section in extract_sections(root, title)
+        if keep_section(spec.page_type, section["heading"])
+    ]
 
     return {
         "major": spec.major,

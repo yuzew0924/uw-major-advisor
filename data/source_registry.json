@@ -78,7 +78,7 @@
     "topic": "non_major_cse_courses",
     "authority": 1.0,
     "url": "https://www.cs.washington.edu/academics/undergraduate/non-major-options/",
-    "current_scrape_status": "present"
+    "current_scrape_status": "excluded_from_admissions_scope"
   },
   {
     "source_id": "cse_course_registration_policy",
@@ -105,7 +105,7 @@
     "topic": "double_degree_policy",
     "authority": 0.9,
     "url": "https://registrar.washington.edu/staff-faculty/dars-advisers/exc-double-triple-degree/",
-    "current_scrape_status": "present"
+    "current_scrape_status": "excluded_from_admissions_scope"
   },
   {
     "source_id": "acms_admissions",
@@ -141,7 +141,7 @@
     "topic": "degree_requirements",
     "authority": 1.0,
     "url": "https://www.hcde.washington.edu/bs/requirements/2024",
-    "current_scrape_status": "present"
+    "current_scrape_status": "excluded_from_admissions_scope"
   },
   {
     "source_id": "stats_admissions",
@@ -159,7 +159,7 @@
     "topic": "degree_requirements",
     "authority": 1.0,
     "url": "https://stat.uw.edu/academics/undergraduate/statistics-bs/major",
-    "current_scrape_status": "present"
+    "current_scrape_status": "excluded_from_admissions_scope"
   },
   {
     "source_id": "amath_admissions",
@@ -177,7 +177,7 @@
     "topic": "degree_requirements",
     "authority": 1.0,
     "url": "https://amath.washington.edu/undergraduate-major-applied-mathematics",
-    "current_scrape_status": "present"
+    "current_scrape_status": "excluded_from_admissions_scope"
   },
   {
     "source_id": "math_admissions",
@@ -195,6 +195,6 @@
     "topic": "degree_requirements",
     "authority": 1.0,
     "url": "https://math.washington.edu/bs-mathematics-major-requirements-0",
-    "current_scrape_status": "present"
+    "current_scrape_status": "excluded_from_admissions_scope"
   }
 ]
