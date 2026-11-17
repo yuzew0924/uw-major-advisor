@@ -118,6 +118,9 @@ def infer_query_intent(query: str) -> str:
     if COURSE_CODE_PATTERN.search(query) and "prerequisite" in q:
         return "course_prerequisites"
 
+    if majors == ["CSE"] and "prerequisite" in q:
+        return "major_admissions"
+
     if re.search(r"\b(register|registration|enroll|enrollment|remain enrolled)\b", q):
         return "course_registration"
 
@@ -347,6 +350,24 @@ class Retriever:
             )
 
         candidates.sort(key=lambda result: result["final_score"], reverse=True)
+        if (
+            page_types == {"major_admissions"}
+            and infer_query_majors(query) == ["CSE"]
+            and "prerequisite" in query.lower()
+            and not re.search(r"\b(?:first[- ]year|freshman|direct[- ]to[- ]major)\b", query, re.I)
+        ):
+            pathway = "transfers" if re.search(r"\btransfer(?:s|ring)?\b", query, re.I) else "current-uw"
+            pathway_sources = [
+                result for result in candidates
+                if result.get("major") == "CSE"
+                and result.get("url", "").rstrip("/").endswith(f"/admissions/{pathway}")
+            ]
+            if pathway_sources:
+                pathway_sources.sort(
+                    key=lambda result: result.get("heading") == "Minimum Academic Requirements",
+                    reverse=True,
+                )
+                candidates = pathway_sources
         return candidates[:top_k]
 
     def retrieve_for_majors(

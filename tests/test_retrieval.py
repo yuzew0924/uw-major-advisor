@@ -85,3 +85,18 @@ def test_multi_major_admission_comparison() -> None:
         result["metadata"]["page_type"] != "course_prerequisites"
         for result in results
     )
+
+
+def test_cse_admission_prerequisites_prioritize_pathway_requirements(monkeypatch) -> None:
+    retriever = Retriever(client=None)
+    monkeypatch.setattr(retriever, "embed_query", lambda _: retriever.index.reconstruct(0)[None, :])
+
+    for question, pathway in (
+        ("What are the CSE prerequisites?", "current-uw"),
+        ("What are the CSE transfer prerequisites?", "transfers"),
+    ):
+        results = retriever.retrieve(question)
+        assert results[0]["heading"] == "Minimum Academic Requirements"
+        assert all(result["url"].rstrip("/").endswith(f"/admissions/{pathway}") for result in results)
+
+    assert infer_query_intent("What are the prerequisites for CSE 414?") == "course_prerequisites"
